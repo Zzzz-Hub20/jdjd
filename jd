@@ -1,0 +1,493 @@
+-- Optimized and Smooth Tutorial GUI - Square Design with Language Selector
+-- Created with performance and smooth animations in mind
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Configuration
+local CONFIG = {
+TWEEN_TIME = 0.4,
+TWEEN_STYLE = Enum.EasingStyle.Quint,
+TWEEN_DIRECTION = Enum.EasingDirection.Out,
+CORNER_RADIUS = UDim.new(0, 12),
+}
+
+-- Languages available
+local LANGUAGES = {
+{code = "EN", name = "English", flag = "🇺🇸"},
+{code = "ES-MX", name = "Spanish (Mexico)", flag = "🇲🇽"},
+{code = "ES", name = "Spanish (Spain)", flag = "🇪🇸"},
+{code = "PT-BR", name = "Portuguese (Brazil)", flag = "🇧🇷"},
+{code = "PT", name = "Portuguese", flag = "🇵🇹"},
+{code = "ID", name = "Indonesian", flag = "🇮🇩"},
+{code = "VI", name = "Vietnamese", flag = "🇻🇳"},
+{code = "TL", name = "Tagalog", flag = "🇵🇭"},
+}
+
+local currentLanguage = "EN"
+
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TutorialGui"
+screenGui.ResetOnSpawn = false
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.Parent = playerGui
+
+-- Main Button Frame - SMALLER
+local mainButton = Instance.new("TextButton")
+mainButton.Name = "MainButton"
+mainButton.Size = UDim2.new(0, 280, 0, 42)
+mainButton.Position = UDim2.new(0.5, -140, 0.88, 0)
+mainButton.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+mainButton.BorderSizePixel = 0
+mainButton.AutoButtonColor = false
+mainButton.Text = "Script Not Working? Click Me For Tutorial"
+mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainButton.TextSize = 13
+mainButton.Font = Enum.Font.GothamBold
+mainButton.Parent = screenGui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = CONFIG.CORNER_RADIUS
+mainCorner.Parent = mainButton
+
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Color = Color3.fromRGB(100, 100, 120)
+mainStroke.Thickness = 1.5
+mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+mainStroke.Parent = mainButton
+
+-- Tutorial Frame - SQUARE DESIGN, CENTERED
+local tutorialFrame = Instance.new("Frame")
+tutorialFrame.Name = "TutorialFrame"
+tutorialFrame.Size = UDim2.new(0, 450, 0, 450)
+tutorialFrame.Position = UDim2.new(0.5, -225, 0.5, -225)
+tutorialFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+tutorialFrame.BorderSizePixel = 0
+tutorialFrame.Visible = false
+tutorialFrame.Parent = screenGui
+
+local tutorialCorner = Instance.new("UICorner")
+tutorialCorner.CornerRadius = UDim.new(0, 14)
+tutorialCorner.Parent = tutorialFrame
+
+local tutorialStroke = Instance.new("UIStroke")
+tutorialStroke.Color = Color3.fromRGB(80, 80, 100)
+tutorialStroke.Thickness = 2
+tutorialStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+tutorialStroke.Parent = tutorialFrame
+
+-- Header Bar
+local headerBar = Instance.new("Frame")
+headerBar.Name = "HeaderBar"
+headerBar.Size = UDim2.new(1, 0, 0, 50)
+headerBar.Position = UDim2.new(0, 0, 0, 0)
+headerBar.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+headerBar.BorderSizePixel = 0
+headerBar.Parent = tutorialFrame
+
+local headerCorner = Instance.new("UICorner")
+headerCorner.CornerRadius = UDim.new(0, 14)
+headerCorner.Parent = headerBar
+
+-- Fix corner to only round top
+local headerFix = Instance.new("Frame")
+headerFix.Size = UDim2.new(1, 0, 0, 20)
+headerFix.Position = UDim2.new(0, 0, 1, -20)
+headerFix.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+headerFix.BorderSizePixel = 0
+headerFix.Parent = headerBar
+
+-- Title at top
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(0, 200, 1, 0)
+titleLabel.Position = UDim2.new(0, 15, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Tutorial Guide"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 16
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = headerBar
+
+-- Language Button
+local languageButton = Instance.new("TextButton")
+languageButton.Name = "LanguageButton"
+languageButton.Size = UDim2.new(0, 90, 0, 32)
+languageButton.Position = UDim2.new(1, -135, 0.5, -16)
+languageButton.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+languageButton.BorderSizePixel = 0
+languageButton.Text = "🌐 EN"
+languageButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+languageButton.TextSize = 13
+languageButton.Font = Enum.Font.GothamBold
+languageButton.Parent = headerBar
+
+local langCorner = Instance.new("UICorner")
+langCorner.CornerRadius = UDim.new(0, 8)
+langCorner.Parent = languageButton
+
+-- Close Button (X)
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "CloseButton"
+closeButton.Size = UDim2.new(0, 32, 0, 32)
+closeButton.Position = UDim2.new(1, -40, 0.5, -16)
+closeButton.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+closeButton.BorderSizePixel = 0
+closeButton.Text = "✕"
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.TextSize = 16
+closeButton.Font = Enum.Font.GothamBold
+closeButton.Parent = headerBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeButton
+
+-- Language Dropdown Frame
+local languageDropdown = Instance.new("ScrollingFrame")
+languageDropdown.Name = "LanguageDropdown"
+languageDropdown.Size = UDim2.new(0, 200, 0, 230)
+languageDropdown.Position = UDim2.new(1, -240, 0, 55)
+languageDropdown.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+languageDropdown.BorderSizePixel = 0
+languageDropdown.Visible = false
+languageDropdown.ScrollBarThickness = 4
+languageDropdown.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 120)
+languageDropdown.CanvasSize = UDim2.new(0, 0, 0, 0)
+languageDropdown.AutomaticCanvasSize = Enum.AutomaticSize.Y
+languageDropdown.Parent = tutorialFrame
+
+local dropdownCorner = Instance.new("UICorner")
+dropdownCorner.CornerRadius = UDim.new(0, 10)
+dropdownCorner.Parent = languageDropdown
+
+local dropdownStroke = Instance.new("UIStroke")
+dropdownStroke.Color = Color3.fromRGB(80, 80, 100)
+dropdownStroke.Thickness = 2
+dropdownStroke.Parent = languageDropdown
+
+local dropdownLayout = Instance.new("UIListLayout")
+dropdownLayout.SortOrder = Enum.SortOrder.LayoutOrder
+dropdownLayout.Padding = UDim.new(0, 2)
+dropdownLayout.Parent = languageDropdown
+
+local dropdownPadding = Instance.new("UIPadding")
+dropdownPadding.PaddingLeft = UDim.new(0, 5)
+dropdownPadding.PaddingRight = UDim.new(0, 5)
+dropdownPadding.PaddingTop = UDim.new(0, 5)
+dropdownPadding.PaddingBottom = UDim.new(0, 5)
+dropdownPadding.Parent = languageDropdown
+
+-- Create language options
+for i, lang in ipairs(LANGUAGES) do
+local langOption = Instance.new("TextButton")
+langOption.Size = UDim2.new(1, -10, 0, 35)
+langOption.BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+langOption.BorderSizePixel = 0
+langOption.Text = lang.flag .. "  " .. lang.name
+langOption.TextColor3 = Color3.fromRGB(255, 255, 255)
+langOption.TextSize = 12
+langOption.Font = Enum.Font.Gotham
+langOption.TextXAlignment = Enum.TextXAlignment.Left
+langOption.LayoutOrder = i
+langOption.Parent = languageDropdown
+
+local optionCorner = Instance.new("UICorner")  
+optionCorner.CornerRadius = UDim.new(0, 6)  
+optionCorner.Parent = langOption  
+  
+local optionPadding = Instance.new("UIPadding")  
+optionPadding.PaddingLeft = UDim.new(0, 10)  
+optionPadding.Parent = langOption  
+  
+-- Hover effect  
+langOption.MouseEnter:Connect(function()  
+    TweenService:Create(langOption, TweenInfo.new(0.2), {  
+        BackgroundColor3 = Color3.fromRGB(60, 60, 70)  
+    }):Play()  
+end)  
+  
+langOption.MouseLeave:Connect(function()  
+    TweenService:Create(langOption, TweenInfo.new(0.2), {  
+        BackgroundColor3 = Color3.fromRGB(45, 45, 55)  
+    }):Play()  
+end)  
+  
+-- Click to select language  
+langOption.MouseButton1Click:Connect(function()  
+    currentLanguage = lang.code  
+    languageButton.Text = lang.flag .. " " .. lang.code  
+    languageDropdown.Visible = false  
+      
+    -- Here you would trigger translation logic  
+    print("Language changed to: " .. lang.name)  
+end)
+
+end
+
+-- Scrolling Frame for Content
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, -20, 1, -80)
+scrollFrame.Position = UDim2.new(0, 10, 0, 60)
+scrollFrame.BackgroundTransparency = 1
+scrollFrame.BorderSizePixel = 0
+scrollFrame.ScrollBarThickness = 4
+scrollFrame.ScrollBarImageColor3 = Color3.fromRGB(120, 120, 140)
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
+scrollFrame.ElasticBehavior = Enum.ElasticBehavior.Always
+scrollFrame.Parent = tutorialFrame
+
+local contentLayout = Instance.new("UIListLayout")
+contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
+contentLayout.Padding = UDim.new(0, 8)
+contentLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+contentLayout.Parent = scrollFrame
+
+local contentPadding = Instance.new("UIPadding")
+contentPadding.PaddingLeft = UDim.new(0, 10)
+contentPadding.PaddingRight = UDim.new(0, 10)
+contentPadding.PaddingTop = UDim.new(0, 10)
+contentPadding.PaddingBottom = UDim.new(0, 10)
+contentPadding.Parent = scrollFrame
+
+-- Function to create text labels
+local function createTextLabel(text, isBold, order)
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, -20, 0, 0)
+label.BackgroundTransparency = 1
+label.Text = text
+label.TextColor3 = Color3.fromRGB(255, 255, 255)
+label.TextSize = isBold and 13 or 11
+label.Font = isBold and Enum.Font.GothamBold or Enum.Font.Gotham
+label.TextWrapped = true
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.TextYAlignment = Enum.TextYAlignment.Top
+label.AutomaticSize = Enum.AutomaticSize.Y
+label.LayoutOrder = order
+label.Parent = scrollFrame
+return label
+end
+
+local function createBullet(text, order)
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, -30, 0, 0)
+label.Position = UDim2.new(0, 15, 0, 0)
+label.BackgroundTransparency = 1
+label.Text = "• " .. text
+label.TextColor3 = Color3.fromRGB(220, 220, 230)
+label.TextSize = 10
+label.Font = Enum.Font.Gotham
+label.TextWrapped = true
+label.TextXAlignment = Enum.TextXAlignment.Left
+label.TextYAlignment = Enum.TextYAlignment.Top
+label.AutomaticSize = Enum.AutomaticSize.Y
+label.LayoutOrder = order
+label.Parent = scrollFrame
+return label
+end
+
+-- Add Tutorial Content
+createTextLabel("Is the script not working or not loading?", true, 1)
+createTextLabel("You did it the wrong way. Here's how to fix it.", false, 2)
+
+createTextLabel("Step-by-step to make the script work", true, 4)
+createTextLabel("First, go to your private server link configuration and copy your link. Make sure you use the server link where you're going to play.", false, 5)
+
+createTextLabel("Enable all of these settings:", true, 8)
+createBullet("Allow joining", 9)
+createBullet("Connection allowed", 10)
+
+createTextLabel("Don't worry — no one will actually join you. This only makes the system think you're in a public server, but in reality, you're still in a private server. If someone does join, just block them and always lock your base.", false, 12)
+
+createTextLabel("After that, join your private server. Make sure you're using the same private server link you copied from the configuration.", false, 15)
+
+createTextLabel("Once you're inside, execute the script and paste the private server link you copied (example: https://www.roblox.com/share?code=fd6767676767&type=Server).", false, 17)
+
+createTextLabel("Then the loading will start, and a GUI will pop up.", false, 20)
+
+createTextLabel("If the script still isn't working, try using a different account. Sometimes it can be buggy on new or alt accounts. Switching accounts usually fixes the issue.", false, 22)
+
+createTextLabel("After following all the steps, the script should run properly.", true, 24)
+
+-- Scroll indicator hint
+local scrollHint = Instance.new("TextLabel")
+scrollHint.Size = UDim2.new(1, 0, 0, 20)
+scrollHint.Position = UDim2.new(0, 0, 1, -25)
+scrollHint.BackgroundTransparency = 1
+scrollHint.Text = "⬇ Swipe down to read more ⬇"
+scrollHint.TextColor3 = Color3.fromRGB(150, 150, 170)
+scrollHint.TextSize = 10
+scrollHint.Font = Enum.Font.GothamBold
+scrollHint.TextTransparency = 0.5
+scrollHint.Parent = tutorialFrame
+
+-- Hide hint when scrolled
+scrollFrame:GetPropertyChangedSignal("CanvasPosition"):Connect(function()
+if scrollFrame.CanvasPosition.Y > 10 then
+TweenService:Create(scrollHint, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+else
+TweenService:Create(scrollHint, TweenInfo.new(0.3), {TextTransparency = 0.5}):Play()
+end
+end)
+
+-- Smooth Tween Functions
+local function fadeIn(frame)
+frame.Visible = true
+frame.Size = UDim2.new(0, 420, 0, 420)
+frame.Position = UDim2.new(0.5, -210, 0.5, -210)
+frame.BackgroundTransparency = 1
+
+for _, child in pairs(frame:GetDescendants()) do  
+    if child:IsA("GuiObject") and child ~= languageDropdown then  
+        child.BackgroundTransparency = 1  
+        if child:IsA("TextLabel") or child:IsA("TextButton") then  
+            child.TextTransparency = 1  
+        end  
+    end  
+end  
+  
+local tweenInfo = TweenInfo.new(CONFIG.TWEEN_TIME, CONFIG.TWEEN_STYLE, CONFIG.TWEEN_DIRECTION)  
+  
+local frameTween = TweenService:Create(frame, tweenInfo, {  
+    Size = UDim2.new(0, 450, 0, 450),  
+    Position = UDim2.new(0.5, -225, 0.5, -225),  
+    BackgroundTransparency = 0  
+})  
+  
+frameTween:Play()  
+  
+task.wait(0.1)  
+  
+for _, child in pairs(frame:GetDescendants()) do  
+    if child:IsA("GuiObject") and child ~= languageDropdown then  
+        local transparency = child.BackgroundTransparency  
+        TweenService:Create(child, tweenInfo, {BackgroundTransparency = transparency == 1 and 1 or 0}):Play()  
+          
+        if child:IsA("TextLabel") or child:IsA("TextButton") then  
+            TweenService:Create(child, tweenInfo, {TextTransparency = child == scrollHint and 0.5 or 0}):Play()  
+        end  
+    end  
+end
+
+end
+
+local function fadeOut(frame)
+languageDropdown.Visible = false
+local tweenInfo = TweenInfo.new(CONFIG.TWEEN_TIME, CONFIG.TWEEN_STYLE, Enum.EasingDirection.In)
+
+for _, child in pairs(frame:GetDescendants()) do  
+    if child:IsA("GuiObject") and child ~= languageDropdown then  
+        TweenService:Create(child, tweenInfo, {BackgroundTransparency = 1}):Play()  
+          
+        if child:IsA("TextLabel") or child:IsA("TextButton") then  
+            TweenService:Create(child, tweenInfo, {TextTransparency = 1}):Play()  
+        end  
+    end  
+end  
+  
+local frameTween = TweenService:Create(frame, tweenInfo, {  
+    Size = UDim2.new(0, 420, 0, 420),  
+    Position = UDim2.new(0.5, -210, 0.5, -210),  
+    BackgroundTransparency = 1  
+})  
+  
+frameTween:Play()  
+frameTween.Completed:Connect(function()  
+    frame.Visible = false  
+    scrollFrame.CanvasPosition = Vector2.new(0, 0)  
+end)
+
+end
+
+-- Button Hover Effects
+mainButton.MouseEnter:Connect(function()
+TweenService:Create(mainButton, TweenInfo.new(0.2), {
+BackgroundColor3 = Color3.fromRGB(55, 55, 65)
+}):Play()
+end)
+
+mainButton.MouseLeave:Connect(function()
+TweenService:Create(mainButton, TweenInfo.new(0.2), {
+BackgroundColor3 = Color3.fromRGB(45, 45, 55)
+}):Play()
+end)
+
+closeButton.MouseEnter:Connect(function()
+TweenService:Create(closeButton, TweenInfo.new(0.2), {
+BackgroundColor3 = Color3.fromRGB(70, 70, 80)
+}):Play()
+end)
+
+closeButton.MouseLeave:Connect(function()
+TweenService:Create(closeButton, TweenInfo.new(0.2), {
+BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+}):Play()
+end)
+
+languageButton.MouseEnter:Connect(function()
+TweenService:Create(languageButton, TweenInfo.new(0.2), {
+BackgroundColor3 = Color3.fromRGB(65, 65, 75)
+}):Play()
+end)
+
+languageButton.MouseLeave:Connect(function()
+TweenService:Create(languageButton, TweenInfo.new(0.2), {
+BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+}):Play()
+end)
+
+-- Language Button Toggle
+languageButton.MouseButton1Click:Connect(function()
+languageDropdown.Visible = not languageDropdown.Visible
+end)
+
+-- Main Button Click Event
+mainButton.MouseButton1Click:Connect(function()
+local hideTween = TweenService:Create(mainButton, TweenInfo.new(CONFIG.TWEEN_TIME), {
+BackgroundTransparency = 1,
+TextTransparency = 1
+})
+hideTween:Play()
+hideTween.Completed:Connect(function()
+mainButton.Visible = false
+end)
+
+task.wait(0.1)  
+fadeIn(tutorialFrame)
+
+end)
+
+-- Close Button Click Event
+closeButton.MouseButton1Click:Connect(function()
+fadeOut(tutorialFrame)
+
+task.wait(CONFIG.TWEEN_TIME)  
+  
+mainButton.Visible = true  
+mainButton.BackgroundTransparency = 1  
+mainButton.TextTransparency = 1  
+  
+TweenService:Create(mainButton, TweenInfo.new(CONFIG.TWEEN_TIME), {  
+    BackgroundTransparency = 0,  
+    TextTransparency = 0  
+}):Play()
+
+end)
+
+-- Initial spawn animation
+mainButton.Position = UDim2.new(0.5, -140, 1, 0)
+mainButton.BackgroundTransparency = 1
+mainButton.TextTransparency = 1
+
+task.wait(0.5)
+
+TweenService:Create(mainButton, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+Position = UDim2.new(0.5, -140, 0.88, 0),
+BackgroundTransparency = 0,
+TextTransparency = 0
+}):Play()
