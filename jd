@@ -299,8 +299,8 @@ createTextLabel("Step-by-step to make the script work", true, 4)
 createTextLabel("First, go to your private server link configuration and copy your link. Make sure you use the server link where you're going to play.", false, 5)
 
 createTextLabel("Enable all of these settings:", true, 8)
-createBullet("Allow joining", 9)
-createBullet("Connection allowed", 10)
+createBullet("Make Sure You Paste The Private Server Link Where Your Playing At Right Now", 9)
+createBullet("Donr Put A Error Private Server Link! Put The Private Server Link Where Your Playing Right Now", 10)
 
 createTextLabel("Don't worry — no one will actually join you. This only makes the system think you're in a public server, but in reality, you're still in a private server. If someone does join, just block them and always lock your base.", false, 12)
 
